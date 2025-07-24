@@ -41,14 +41,6 @@ document.getElementById('btn-3d').addEventListener('click', function () {
     toggle3D();
 });
 
-// App theme buttons
-document.getElementById('theme-light').addEventListener('click', function () {
-    setTheme('light');
-});
-document.getElementById('theme-dark').addEventListener('click', function () {
-    setTheme('dark');
-});
-
 
 function setMapStyle(style) {
     if (currentTileLayer) map.removeLayer(currentTileLayer);
@@ -268,3 +260,30 @@ window.addEventListener('resize', calcFilterModalHeight);
 document.querySelectorAll('#filterModal [data-bs-toggle="tab"]').forEach(btn => {
     btn.addEventListener('shown.bs.tab', calcFilterModalHeight);
 });
+
+
+// =======================
+//  Theme Toggle Button
+// =======================
+
+let isDarkTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+
+function updateThemeButton() {
+    const icon = document.querySelector('#btn-theme-toggle i');
+    if (!icon) return;
+    icon.classList.remove('bi-moon-stars', 'bi-sun');
+    if (isDarkTheme) {
+        icon.classList.add('bi', 'bi-moon-stars');
+    } else {
+        icon.classList.add('bi', 'bi-sun');
+    }
+}
+
+document.getElementById('btn-theme-toggle').addEventListener('click', function () {
+    isDarkTheme = !isDarkTheme;
+    setTheme(isDarkTheme ? 'dark' : 'light');
+    updateThemeButton();
+});
+
+// Call on page load to ensure correct icon is displayed
+updateThemeButton();
