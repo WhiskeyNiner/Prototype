@@ -271,12 +271,7 @@ let isDarkTheme = document.documentElement.getAttribute('data-bs-theme') === 'da
 function updateThemeButton() {
     const icon = document.querySelector('#btn-theme-toggle i');
     if (!icon) return;
-    icon.classList.remove('bi-moon-stars', 'bi-sun');
-    if (isDarkTheme) {
-        icon.classList.add('bi', 'bi-moon-stars');
-    } else {
-        icon.classList.add('bi', 'bi-sun');
-    }
+    icon.className = isDarkTheme ? 'bi bi-moon-stars' : 'bi bi-sun';
 }
 
 document.getElementById('btn-theme-toggle').addEventListener('click', function () {
@@ -285,5 +280,5 @@ document.getElementById('btn-theme-toggle').addEventListener('click', function (
     updateThemeButton();
 });
 
-// Call on page load to ensure correct icon is displayed
+// Call this once at startup!
 updateThemeButton();
