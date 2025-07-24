@@ -1,1 +1,385 @@
-asdf
+﻿<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amateur Repeater Directory</title>
+    <!-- Bootstrap & icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-body text-body">
+    <nav class="navbar bg-body-secondary border-bottom px-3 toolbar sticky-top">
+        <div class="container-fluid px-0 d-flex align-items-center">
+            <button id="toggleSidebar" class="btn btn-sm btn-outline-primary me-2"><i class="bi bi-sliders"></i> Properties</button>
+            <button id="btn-filter" class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#filterModal"><i class="bi bi-funnel"></i> Filter</button>
+            <button id="btn-export" class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i> Export</button>
+            <div class="d-flex align-items-center flex-nowrap gap-2 ms-2 toolbar-controls">
+                <select id="citySelect" class="form-select form-select-sm" style="width:auto; min-width: 160px;">
+                    <option value="">Jump to city…</option>
+                    <option value="sf">San Francisco, CA</option>
+                    <option value="sea">Seattle, WA</option>
+                    <option value="nyc">New York, NY</option>
+                    <option value="chi">Chicago, IL</option>
+                    <option value="den">Denver, CO</option>
+                </select>
+                <div class="d-flex align-items-center">
+                    <span class="me-1 small">Cluster</span>
+                    <input type="number" min="0" max="20" id="clusterZoom" class="form-control form-control-sm" value="12" style="width:3.2rem;" />
+                </div>
+            </div>
+            <div class="d-flex align-items-center ms-auto">
+                <div class="btn-group me-2" role="group" aria-label="Comm Toggles">
+                    <button id="btn-ping" class="btn btn-sm btn-outline-secondary">Ping</button>
+                    <button id="btn-rx" class="btn btn-sm btn-outline-secondary">RX</button>
+                    <button id="btn-tx" class="btn btn-sm btn-outline-secondary">TX</button>
+                </div>
+                <button id="btn-3d" class="btn btn-sm btn-outline-secondary me-2"><i class="bi bi-cube"></i> 3D</button>
+                <div class="btn-group me-2" role="group" aria-label="Map Style">
+                    <button id="btn-map-light" class="btn btn-sm btn-outline-secondary"><i class="bi bi-sun"></i> Map</button>
+                    <button id="btn-map-dark" class="btn btn-sm btn-outline-secondary active"><i class="bi bi-moon-stars"></i> Map</button>
+                </div>
+            </div>
+            <div class="btn-group me-3" role="group" aria-label="Theme UI">
+                <button id="theme-light" class="btn btn-sm btn-outline-secondary"><i class="bi bi-sun"></i></button>
+                <button id="theme-dark" class="btn btn-sm btn-outline-secondary active"><i class="bi bi-moon-stars"></i></button>
+            </div>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+        </div>
+    </nav>
+
+    <div class="main-container right-sidebar">
+        <div id="sidebar" class="bg-body-tertiary p-3 sidebar">
+            <h5><i class="bi bi-funnel"></i> Repeater Properties</h5>
+            <table class="table table-sm table-bordered table-striped">
+                <tbody>
+                    <tr><th>OutputFrequency</th><td>144.987500</td></tr>
+                    <tr><th>InputFrequency</th><td>147.487500</td></tr>
+                    <tr><th>Callsign</th><td>W6TCP</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="drag-handle" id="dragHandle"></div>
+        <div class="map-container"><div id="map"></div></div>
+    </div>
+
+    <footer class="bg-body-secondary border-top py-2 footer sticky-bottom">
+        <div class="footer-inner">
+            <div class="small">&copy; 2025 Amateur Repeater Directory — Free, Verified, Community-Maintained</div>
+            <div class="social">
+                <a aria-label="YouTube" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-youtube"></i></a>
+                <a aria-label="Discord" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-discord"></i></a>
+                <a aria-label="Twitter" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-twitter"></i></a>
+                <a aria-label="Reddit" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-reddit"></i></a>
+                <a aria-label="Wix Blog" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-journal-text"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================= -->
+    <!--        Filter Modal       -->
+    <!-- ========================= -->
+    <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <ul class="nav nav-tabs mb-3" id="filterTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="bands-tab" data-bs-toggle="tab" data-bs-target="#bands-pane" type="button" role="tab">Frequency Bands</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="modes-tab" data-bs-toggle="tab" data-bs-target="#modes-pane" type="button" role="tab">Modes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="emerg-tab" data-bs-toggle="tab" data-bs-target="#emerg-pane" type="button" role="tab">Emergency Networks</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Bands -->
+                        <div class="tab-pane fade show active" id="bands-pane" role="tabpanel" aria-labelledby="bands-tab">
+                            <div class="filter-box">
+                                <div class="row row-cols-2 row-cols-md-3 g-3">
+                                    <!-- Column entries -->
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-23cm">
+                                            <label class="form-check-label" for="b-23cm">23cm</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-33cm">
+                                            <label class="form-check-label" for="b-33cm">33cm</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-70cm" checked>
+                                            <label class="form-check-label" for="b-70cm">70cm</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-2m" checked>
+                                            <label class="form-check-label" for="b-2m">2m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-125m">
+                                            <label class="form-check-label" for="b-125m">1.25m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-6m">
+                                            <label class="form-check-label" for="b-6m">6m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-10m">
+                                            <label class="form-check-label" for="b-10m">10m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-12m">
+                                            <label class="form-check-label" for="b-12m">12m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-15m">
+                                            <label class="form-check-label" for="b-15m">15m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-17m">
+                                            <label class="form-check-label" for="b-17m">17m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-20m">
+                                            <label class="form-check-label" for="b-20m">20m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-30m">
+                                            <label class="form-check-label" for="b-30m">30m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-40m">
+                                            <label class="form-check-label" for="b-40m">40m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-80m">
+                                            <label class="form-check-label" for="b-80m">80m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-160m">
+                                            <label class="form-check-label" for="b-160m">160m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-630m">
+                                            <label class="form-check-label" for="b-630m">630m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-2200m">
+                                            <label class="form-check-label" for="b-2200m">2,200m</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch form-switch-sm">
+                                            <input class="form-check-input" type="checkbox" id="b-gmrs">
+                                            <label class="form-check-label" for="b-gmrs">GMRS</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modes -->
+                        <div class="tab-pane fade" id="modes-pane" role="tabpanel" aria-labelledby="modes-tab">
+                            <div class="filter-box">
+                                <div class="row row-cols-2 row-cols-md-3 g-3">
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-fm"><label class="form-check-label" for="m-fm">FM</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-dmr"><label class="form-check-label" for="m-dmr">DMR</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-dstar"><label class="form-check-label" for="m-dstar">D-Star</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-m17"><label class="form-check-label" for="m-m17">M17</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-nxdn"><label class="form-check-label" for="m-nxdn">NXDN</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-p25"><label class="form-check-label" for="m-p25">P25</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="m-fusion"><label class="form-check-label" for="m-fusion">System Fusion</label></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Networks -->
+                        <div class="tab-pane fade" id="emerg-pane" role="tabpanel" aria-labelledby="emerg-tab">
+                            <div class="filter-box">
+                                <div class="row row-cols-2 row-cols-md-3 g-3">
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="e-ares"><label class="form-check-label" for="e-ares">ARES</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="e-races"><label class="form-check-label" for="e-races">RACES</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="e-skywarn"><label class="form-check-label" for="e-skywarn">SKYWARN</label></div></div>
+                                    <div class="col"><div class="form-check form-switch form-switch-sm"><input class="form-check-input" type="checkbox" id="e-canwarn"><label class="form-check-label" for="e-canwarn">CANWARN</label></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0">
+                    <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Apply</button>
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== -->
+    <!--        Login Modal       -->
+    <!-- ======================== -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 justify-content-center">
+                    <h5 class="modal-title fw-semibold" id="loginModalLabel">
+                        <i class="bi bi-lock-fill login-header-icon"></i> Login to Access your Account
+                    </h5>
+                </div>
+                <div class="modal-body pt-0">
+                    <form id="loginForm">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control border-start-0" id="username" placeholder="E-mail address" required />
+                            <span class="input-tag-right">Email</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control border-start-0" id="password" placeholder="Password" required />
+                            <span class="input-tag-right">Password</span>
+                        </div>
+                        <p class="password-hint mb-3">
+                            Password: 8 characters minimum, Contain at least 1 upper case, 1 lower case, 1 number, and 1 special character !@#$%^&*?$
+                        </p>
+                        <hr class="my-3" />
+                        <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+                            <a href="#" id="link-forgot" class="link-primary text-decoration-none">Forgot Password</a>
+                            <span class="text-body-secondary">or</span>
+                            <a href="#" id="link-create-account" class="link-primary text-decoration-none">Create Account</a>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-center pt-0">
+                            <button type="submit" class="btn btn-primary px-5">Login</button>
+                            <button type="button" class="btn btn-outline-secondary px-5" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== -->
+    <!--      Register Modal      -->
+    <!-- ======================== -->
+    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 justify-content-center">
+                    <h5 class="modal-title fw-semibold" id="registerModalLabel">
+                        <i class="bi bi-person-fill login-header-icon"></i> Create Account
+                    </h5>
+                </div>
+                <div class="modal-body pt-0">
+                    <form id="registerForm">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control border-start-0" id="reg-username" placeholder="Callsign or other ..." required />
+                            <span class="input-tag-right">Username</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control border-start-0" id="reg-email" placeholder="E-mail address" required />
+                            <span class="input-tag-right">Email</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control border-start-0" id="reg-password" placeholder="Password" required />
+                            <span class="input-tag-right">Password</span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control border-start-0" id="reg-password2" placeholder="Confirm Password" required />
+                            <span class="input-tag-right">Password</span>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="reg-terms" required>
+                            <label class="form-check-label" for="reg-terms">I agree to the terms and conditions <span class="text-danger">*</span></label>
+                        </div>
+                        <p class="password-hint mb-3">
+                            Password: 8 characters minimum, Contain at least 1 upper case, 1 lower case, 1 number, and 1 special character !@#$%^&*?$
+                        </p>
+                        <div class="modal-footer border-0 justify-content-center pt-0">
+                            <button type="submit" class="btn btn-primary px-5">Register</button>
+                            <button type="button" class="btn btn-outline-secondary px-5" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================== -->
+    <!--     Forgot Password Modal   -->
+    <!-- =========================== -->
+    <div class="modal fade" id="forgotModal" tabindex="-1" aria-labelledby="forgotModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-0 justify-content-center">
+                    <h5 class="modal-title fw-semibold" id="forgotModalLabel">
+                        <i class="bi bi-lock login-header-icon"></i> Forgot Password
+                    </h5>
+                </div>
+                <div class="modal-body pt-0">
+                    <form id="forgotForm">
+                        <div class="input-group mb-4">
+                            <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-person"></i></span>
+                            <input type="email" class="form-control border-start-0" id="forgot-email" placeholder="E-mail address" required />
+                            <span class="input-tag-right">Email</span>
+                        </div>
+                        <div class="modal-footer border-0 justify-content-center pt-0">
+                            <button type="submit" class="btn btn-primary px-5">Send Reset Email</button>
+                            <button type="button" class="btn btn-outline-secondary px-5" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS dependencies and your modular main.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
