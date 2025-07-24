@@ -28,14 +28,6 @@ function addSampleMarker(lat, lng, html) {
 // sample
 addSampleMarker(37.7749, -122.4194, 'W9XYZ Repeater<br>146.940- PL 123.0');
 
-// Map theme buttons
-document.getElementById('btn-map-light').addEventListener('click', function () {
-    setMapStyle('light');
-});
-document.getElementById('btn-map-dark').addEventListener('click', function () {
-    setMapStyle('dark');
-});
-
 // 3D toggle
 document.getElementById('btn-3d').addEventListener('click', function () {
     toggle3D();
@@ -50,8 +42,7 @@ function setMapStyle(style) {
     else currentTileLayer = topoTiles;
     map.addLayer(currentTileLayer);
     if (!is3DActive) {
-        document.getElementById('btn-map-light').classList.toggle('active', style === 'light');
-        document.getElementById('btn-map-dark').classList.toggle('active', style === 'dark');
+        document.getElementById('btn-map-toggle').classList.toggle('active');
     }
 }
 
@@ -266,19 +257,35 @@ document.querySelectorAll('#filterModal [data-bs-toggle="tab"]').forEach(btn => 
 //  Theme Toggle Button
 // =======================
 
+// INITIAL STATE (set these to your defaults)
+let isMapDark = (typeof currentMapStyle !== "undefined") ? (currentMapStyle === 'dark') : true;
 let isDarkTheme = document.documentElement.getAttribute('data-bs-theme') === 'dark';
 
+// --- UPDATE BUTTON ICONS ---
+function updateMapButton() {
+    const icon = document.querySelector('#btn-map-toggle i');
+    if (!icon) return;
+    icon.className = isMapDark ? 'bi bi-moon-stars' : 'bi bi-sun';
+}
 function updateThemeButton() {
     const icon = document.querySelector('#btn-theme-toggle i');
     if (!icon) return;
     icon.className = isDarkTheme ? 'bi bi-moon-stars' : 'bi bi-sun';
 }
 
+// --- CLICK LISTENERS ---
+document.getElementById('btn-map-toggle').addEventListener('click', function () {
+    isMapDark = !isMapDark;
+    setMapStyle(isMapDark ? 'dark' : 'light');  // Your function
+    updateMapButton();
+});
+
 document.getElementById('btn-theme-toggle').addEventListener('click', function () {
     isDarkTheme = !isDarkTheme;
-    setTheme(isDarkTheme ? 'dark' : 'light');
+    setTheme(isDarkTheme ? 'dark' : 'light');   // Your function
     updateThemeButton();
 });
 
-// Call this once at startup!
+// --- INITIALIZE BUTTON ICONS ---
+updateMapButton();
 updateThemeButton();
