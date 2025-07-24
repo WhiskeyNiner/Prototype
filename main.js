@@ -57,8 +57,8 @@ function setMapStyle(style) {
 
 function setTheme(mode) {
     document.documentElement.setAttribute('data-bs-theme', mode);
-    document.getElementById('theme-light').classList.toggle('active', mode === 'light');
-    document.getElementById('theme-dark').classList.toggle('active', mode === 'dark');
+    // No more theme-light/theme-dark buttons to toggle!
+    // You can optionally update the theme button icon here if you wish
 }
 
 function toggle3D() {
