@@ -54,18 +54,16 @@ function setTheme(mode) {
 
 function toggle3D() {
     const btn3D = document.getElementById('btn-3d');
-    const btnMapLight = document.getElementById('btn-map-light');
-    const btnMapDark = document.getElementById('btn-map-dark');
+    const btnMapToggle = document.getElementById('btn-map-toggle');
     is3DActive = !is3DActive;
     if (is3DActive) {
         previousMapStyle = currentMapStyle;
         setMapStyle('topo');
         btn3D.classList.add('active');
-        btnMapLight.disabled = true; btnMapDark.disabled = true;
-        btnMapLight.classList.remove('active'); btnMapDark.classList.remove('active');
+        btnMapToggle.disabled = true; // << DISABLE
     } else {
         btn3D.classList.remove('active');
-        btnMapLight.disabled = false; btnMapDark.disabled = false;
+        btnMapToggle.disabled = false; // << RE-ENABLE
         setMapStyle(previousMapStyle);
     }
 }
