@@ -14,9 +14,9 @@ const darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x
 });
 
 let currentTileLayer = null;
-let currentMapStyle = 'dark';
+let currentMapStyle = 'light';
 let is3DActive = false;
-let previousMapStyle = 'dark';
+let previousMapStyle = 'light';
 
 // Marker cluster setup
 let markerCluster = L.markerClusterGroup({ disableClusteringAtZoom: 12 });

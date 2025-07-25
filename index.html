@@ -17,9 +17,18 @@
         <div class="container-fluid px-0 d-flex align-items-center">
 
             <div class="d-flex align-items-center gap-2 me-2">
-                <button id="toggleSidebar" class="btn btn-sm btn-outline-primary"><i class="bi bi-sliders"></i> Properties</button>
-                <button id="btn-filter" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal"><i class="bi bi-funnel"></i> Filter</button>
-                <button id="btn-export" class="btn btn-sm btn-outline-success"><i class="bi bi-download"></i> Export</button>
+                <button id="toggleSidebar" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-sliders"></i>
+                    <span class="d-none d-sm-inline"> Properties</span>
+                </button>
+                <button id="btn-filter" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    <i class="bi bi-funnel"></i>
+                    <span class="d-none d-sm-inline"> Filter</span>
+                </button>
+                <button id="btn-export" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-download"></i>
+                    <span class="d-none d-sm-inline"> Export</span>
+                </button>
             </div>
             <div class="d-flex align-items-center flex-nowrap gap-2 ms-2 toolbar-controls">
                 <select id="citySelect" class="form-select form-select-sm" style="width:auto; min-width: 160px;">
@@ -71,19 +80,28 @@
         <div class="map-container"><div id="map"></div></div>
     </div>
 
-    <footer class="bg-body-secondary border-top py-2 footer sticky-bottom">
-        <div class="footer-inner">
-            <div class="small">Amateur Repeater Directory, &copy; 2025 — Free, Verified, Community-Maintained</div>
-            <div class="social">
-                <a aria-label="Wix Blog" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-journal-text"></i></a>
-                <a aria-label="YouTube" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-youtube"></i></a>
-                <a aria-label="Discord" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-discord"></i></a>
-                <a aria-label="Twitter" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-twitter"></i></a>
-                <a aria-label="Reddit" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-reddit"></i></a>
-                <a aria-label="GitHub" href="https://amateurrepeaterdirectory.org/" target="_blank" rel="noopener"><i class="bi bi-github"></i></a>
+    <footer class="footer px-3 py-2 small">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <!-- Text (hidden on phones) -->
+                <div class="col-sm-auto d-none d-sm-block">
+                    Amateur Repeater Directory, © 2025 — Free, Verified, Community-Maintained
+                </div>
+
+                <!-- Icons (centered on phones, right-aligned on larger screens) -->
+                <div class="col-12 col-sm text-sm-end d-flex justify-content-center justify-content-sm-end gap-3 mt-2 mt-sm-0">
+                    <a href="#"><i class="bi bi-journal-text text-warning"></i></a>
+                    <a href="#"><i class="bi bi-youtube text-danger"></i></a>
+                    <a href="#"><i class="bi bi-discord text-primary"></i></a>
+                    <a href="#"><i class="bi bi-twitter text-info"></i></a>
+                    <a href="#"><i class="bi bi-reddit text-danger"></i></a>
+                    <a href="#"><i class="bi bi-github text-light"></i></a>
+                </div>
             </div>
         </div>
     </footer>
+
+
 
     <!-- ========================= -->
     <!--        Filter Modal       -->
