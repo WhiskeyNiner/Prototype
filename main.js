@@ -16,7 +16,7 @@ const darkTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x
 let currentTileLayer = null;
 let currentMapStyle = 'light';
 let is3DActive = false;
-let previousMapStyle = 'light';
+let previousMapStyle = 'dark';
 
 // Marker cluster setup
 let markerCluster = L.markerClusterGroup({ disableClusteringAtZoom: 12 });
@@ -26,7 +26,7 @@ function addSampleMarker(lat, lng, html) {
     markerCluster.addLayer(L.marker([lat, lng]).bindPopup(html));
 }
 // sample
-addSampleMarker(37.7749, -122.4194, 'W9XYZ Repeater<br>146.940- PL 123.0');
+addSampleMarker(37.7749, -122.4194, 'W9ALB Repeater<br>146.940- PL 123.0');
 
 // 3D toggle
 document.getElementById('btn-3d').addEventListener('click', function () {

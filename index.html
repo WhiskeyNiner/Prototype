@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,17 +19,18 @@
             <div class="d-flex align-items-center gap-2 me-2">
                 <button id="toggleSidebar" class="btn btn-sm btn-outline-primary">
                     <i class="bi bi-sliders"></i>
-                    <span class="d-none d-sm-inline"> Properties</span>
+                    <span class="btn-label d-none d-sm-inline"> Properties</span>
                 </button>
                 <button id="btn-filter" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
                     <i class="bi bi-funnel"></i>
-                    <span class="d-none d-sm-inline"> Filter</span>
+                     <span class="btn-label d-none d-sm-inline"> Filter</span>
                 </button>
                 <button id="btn-export" class="btn btn-sm btn-outline-success">
                     <i class="bi bi-download"></i>
-                    <span class="d-none d-sm-inline"> Export</span>
+                     <span class="btn-label d-none d-sm-inline"> Export</span>
                 </button>
             </div>
+
             <div class="d-flex align-items-center flex-nowrap gap-2 ms-2 toolbar-controls">
                 <select id="citySelect" class="form-select form-select-sm" style="width:auto; min-width: 160px;">
                     <option value="">Jump to city…</option>
@@ -39,7 +40,7 @@
                     <option value="chi">Chicago, IL</option>
                     <option value="den">Denver, CO</option>
                 </select>
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center hide-on-tablet">
                     <span class="me-1 small">Cluster</span>
                     <input type="number" min="0" max="20" id="clusterZoom" class="form-control form-control-sm" value="12" style="width:3.2rem;" />
                 </div>
@@ -58,15 +59,15 @@
                     <i class="bi bi-moon-stars"></i>
                 </button>
             </div>
-            <div class="btn-group me-3" role="group" aria-label="Theme UI">
-
-            </div>
-            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="bi bi-box-arrow-in-right"></i> Login</button>
-        </div>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span class="login-label"> Login</span>
+            </button>       
+         </div>
     </nav>
 
     <div class="main-container right-sidebar">
-        <div id="sidebar" class="bg-body-tertiary p-3 sidebar">
+        <div id="sidebar" class="bg-body-tertiary p-3 sidebar hidden">
             <h5><i class="bi bi-funnel"></i> Repeater Properties</h5>
             <table class="table table-sm table-bordered table-striped">
                 <tbody>
@@ -76,11 +77,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="drag-handle" id="dragHandle"></div>
+        <div class="drag-handle" id="dragHandle" style="display: none;"></div>
         <div class="map-container"><div id="map"></div></div>
     </div>
 
-    <footer class="footer px-3 py-2 small">
+    <footer class="footer px-3 small">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <!-- Text (hidden on phones) -->
@@ -90,12 +91,12 @@
 
                 <!-- Icons (centered on phones, right-aligned on larger screens) -->
                 <div class="col-12 col-sm text-sm-end d-flex justify-content-center justify-content-sm-end gap-3 mt-2 mt-sm-0">
-                    <a href="#"><i class="bi bi-journal-text text-warning"></i></a>
-                    <a href="#"><i class="bi bi-youtube text-danger"></i></a>
+                    <a href="https://whiskeyninerht.wixsite.com/blog"><i class="bi bi-journal-text text-warning"></i></a>
+                    <a href="https://www.youtube.com/@WhiskeyNiner-HT"><i class="bi bi-youtube text-danger"></i></a>
                     <a href="#"><i class="bi bi-discord text-primary"></i></a>
-                    <a href="#"><i class="bi bi-twitter text-info"></i></a>
+                    <a href="https://x.com/WhiskeyNinerHT"><i class="bi bi-twitter text-info"></i></a>
                     <a href="#"><i class="bi bi-reddit text-danger"></i></a>
-                    <a href="#"><i class="bi bi-github text-light"></i></a>
+                    <a href="https://github.com/Amateur-Repeater-Directory"><i class="bi bi-github"></i></a>
                 </div>
             </div>
         </div>

@@ -243,3 +243,26 @@ body {
     }
 }
 
+.footer .bi {
+    font-size: 1.4em;       /* Change this number for larger/smaller icons */
+    vertical-align: middle; /* Keeps them aligned if you add text later */
+}
+
+@media (max-width: 1023px) {
+  .btn-label {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .hide-on-tablet {
+    display: none !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  /* 575.98px is Bootstrap's xs breakpoint—phones only */
+  .login-label {
+    display: none !important;
+  }
+}
